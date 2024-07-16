@@ -34,7 +34,8 @@ Utilizando o programa [exemplo/dft.cpp](https://agostinhobritojr.github.io/tutor
 
 ![senoide 256](./unidade-II/exercicio15.2/senoide-256.png)
 
-```dft.py
+```python
+# dft.py
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
@@ -81,7 +82,8 @@ plt.show()
 
 Usando agora o [filestorage.cpp](https://agostinhobritojr.github.io/tutorial/pdi/exemplos/filestorage.cpp), mostrado na [Listagem 15, “filestorage.cpp](https://agostinhobritojr.github.io/tutorial/pdi/filestorage.html#ex-filestorage)” como referência, adapte o programa exemplos/dft.cpp para ler a imagem em ponto flutuante armazenada no arquivo YAML equivalente (ilustrado na [Listagem 18, “trecho do arquivo senoide-256.yml](https://agostinhobritojr.github.io/tutorial/pdi/filestorage.html#ex-senoideyml)”).
 
-```filestorage.py
+```python
+# filestorage.py
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
@@ -118,7 +120,7 @@ if __name__ == "__main__":
 
 ![Magnitude da Senoide 256(2)](./unidade-II/exercicio15.2/magnite-senoide-yml.png)
 
-## Conclusão
+### Conclusão
 
 Ao compararmos o espectro de magnitude gerado para a "Imagem senoidal com 256x256 pixels" com o valor teórico da Transformada de Fourier (TF) da senóide, observamos discrepâncias significativas. O espectro de magnitude apresentou múltiplos picos, contrariando o valor teórico que prevê apenas dois picos em f0 e -f0. Contudo, ao adaptar o programa exemplos/dft.cpp para ler a imagem em ponto flutuante armazenada no arquivo YAML, o espectro de magnitude gerado mostrou-se muito mais próximo do valor teórico. Isso se deve ao fato de que o formato YAML armazena informações em ponto flutuante, preservando mais detalhes e minimizando a perda de informação, contrariamente ao formato PNG que trabalha com valores inteiros, resultando em truncamento e perda de detalhes. Portanto, a utilização de um formato de arquivo que preserva a precisão dos dados de entrada é fundamental para obter resultados mais próximos do valor teórico esperado.
 
@@ -127,3 +129,193 @@ Ao compararmos o espectro de magnitude gerado para a "Imagem senoidal com 256x25
 Utilizando o programa [exemplos/dftfilter.cpp](https://agostinhobritojr.github.io/tutorial/pdi/exemplos/dftfilter.cpp) como referência, implemente o filtro homomórfico para melhorar imagens com iluminação irregular. Crie uma cena mal iluminada e ajuste os parâmetros do filtro homomórfico para corrigir a iluminação da melhor forma possível. Assuma que a imagem fornecida é em tons de cinza.
 
 ![Image With Irregular Illumination](./unidade-II/exercicio16.2/image-with-irregular-illumination.png)
+
+### [Exercício 18.3](https://agostinhobritojr.github.io/tutorial/pdi/canny.html#_exerc%C3%ADcios_17)
+
+Utilizando os programas [exemplos/canny.cpp](https://agostinhobritojr.github.io/tutorial/pdi/exemplos/canny.cpp) e [exemplos/pontilhismo.cpp](https://agostinhobritojr.github.io/tutorial/pdi/exemplos/pontilhismo.cpp) como referência, implemente um programa cannypoints.cpp. A idéia é usar as bordas produzidas pelo algoritmo de Canny para melhorar a qualidade da imagem pontilhista gerada. A forma como a informação de borda será usada é livre.
+
+```python
+# canny.py
+import cv2
+import sys
+
+# Initial slider values
+top_slider = 10
+top_slider_max = 200
+
+# Load the image
+image = cv2.imread(sys.argv[1], cv2.IMREAD_GRAYSCALE)
+border = None
+
+# Callback function for trackbar
+def on_trackbar_canny(val):
+    global border
+    border = cv2.Canny(image, val, 3*val)
+    cv2.imshow("Canny", border)
+
+# Create window and trackbar
+cv2.namedWindow("Canny", 1)
+cv2.createTrackbar("Threshold inferior", "Canny", top_slider, top_slider_max, on_trackbar_canny)
+
+# Initialize the canny display
+on_trackbar_canny(top_slider)
+
+# Wait for a key press and save the result
+cv2.waitKey(0)
+cv2.imwrite("cannyborders.png", border)
+```
+
+### Resultado:
+
+![canny](./unidade-II/exercicio18.3/cannyborders.png)
+
+```python
+# canny_points.py
+import cv2
+import numpy as np
+from copy import copy
+import random
+
+STEP = 5
+JITTER = 3
+RADIUS = 2
+
+T1 = 130
+edges = 0
+
+image = cv2.imread("lena.png", 0)
+height, width = image.shape
+points = copy(image)
+
+for i in range(height):
+    for j in range(width):
+        points[i, j] = 255
+
+xrange = np.zeros(int(height/STEP))
+yrange = np.zeros(int(width/STEP))
+
+for xvalue in range(len(xrange)):
+    xrange[xvalue] = xvalue
+
+for yvalue in range(len(yrange)):
+    yrange[yvalue] = yvalue
+
+xrange = [value*STEP+STEP/2 for value in xrange]
+yrange= [value*STEP+STEP/2 for value in yrange]
+
+np.random.shuffle(xrange)
+
+for i in xrange:
+    np.random.shuffle(yrange)
+    for j in yrange:
+        x = int(i + random.randint(1, 2*JITTER-JITTER))
+        y = int(j + random.randint(1, 2*JITTER-JITTER))
+        if(x >= height):
+                x = height-1
+        if( y >= width):
+                y = width-1
+        gray = image[x,y]
+        cv2.circle(points,
+                (y, x),
+                RADIUS,
+                int(gray),
+                -1,
+                cv2.LINE_AA)
+
+edges = cv2.Canny(points, T1, 3*T1) 
+
+for i in range(height):
+    for j in range(width):
+        if(edges[i, j] != 0):
+            gray = image[i,j]
+            cv2.circle(points,
+                    (j, i),
+                    RADIUS,
+                    int(gray),
+                    -1,
+                    cv2.LINE_AA)
+
+cv2.imshow("pointillism", points)
+cv2.imwrite("pointillism.png", points)
+cv2.waitKey(0)     
+cv2.destroyAllWindows()
+```
+
+### Resultado:
+
+![pointillism](./unidade-II/exercicio18.3/pointillism.png)
+
+### [Exercício 19.2](https://agostinhobritojr.github.io/tutorial/pdi/kmeans.html#_exerc%C3%ADcios_18)
+
+Utilizando o programa [kmeans.cpp](https://agostinhobritojr.github.io/tutorial/pdi/exemplos/kmeans.cpp) como exemplo prepare um programa exemplo onde a execução do código se dê usando o parâmetro nRodadas=1 e inciar os centros de forma aleatória usando o parâmetro KMEANS_RANDOM_CENTERS ao invés de KMEANS_PP_CENTERS. Realize 10 rodadas diferentes do algoritmo e compare as imagens produzidas. Explique porque elas podem diferir tanto.
+
+![sushi-original-image](./unidade-II/exercicio19.2/sushi.jpg)
+
+```python
+# kmeans.py
+import cv2
+import numpy as np
+
+def main():
+    
+    NCLUSTERS = 8
+    NROUNDS = 1
+    
+    image = cv2.imread("sushi.jpg", 1)
+    height, width, channels = image.shape
+    samples = np.zeros([height*width, 3], dtype = np.float32)
+    
+    for iteration in range(1, 11):  # Loop para executar o algoritmo 10 vezes
+        count = 0
+        for x in range(height):
+            for y in range(width):
+                samples[count] = image[x][y]
+                count += 1
+                
+        compactness, labels, centers = cv2.kmeans(samples,
+                                            NCLUSTERS, 
+                                            None,
+                                            (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10000, 0.0001), 
+                                            NROUNDS, 
+                                            cv2.KMEANS_RANDOM_CENTERS)
+        centers = np.uint8(centers)
+        res = centers[labels.flatten()]
+        image2 = res.reshape((image.shape))
+        
+        # Salva cada imagem com um nome único
+        cv2.imwrite(f"kmeans{iteration}.jpg", image2)
+        
+        # Opcional: Exibir a imagem
+        # cv2.imshow(f"KMEANS {iteration}", image2)
+        # cv2.waitKey(0)     
+        # cv2.destroyAllWindows()
+
+if __name__ == '__main__':
+    main()
+```
+
+### Resultado:
+
+![kmeans1](./unidade-II/exercicio19.2/kmeans1.jpg)
+
+![kmeans2](./unidade-II/exercicio19.2/kmeans2.jpg)
+
+![kmeans3](./unidade-II/exercicio19.2/kmeans3.jpg)
+
+![kmeans4](./unidade-II/exercicio19.2/kmeans4.jpg)
+
+![kmeans5](./unidade-II/exercicio19.2/kmeans5.jpg)
+
+![kmeans6](./unidade-II/exercicio19.2/kmeans6.jpg)
+
+![kmeans7](./unidade-II/exercicio19.2/kmeans7.jpg)
+
+![kmeans8](./unidade-II/exercicio19.2/kmeans8.jpg)
+
+![kmeans9](./unidade-II/exercicio19.2/kmeans9.jpg)
+
+![kmeans10](./unidade-II/exercicio19.2/kmeans10.jpg)
+
+### Conclusão
+
+Ao executar o programa exemplo/kmeans.cpp, observamos que o algoritmo de K-Means pode diferir bastante entre as imagens produzidas. Isso ocorre porque o centro inicial é escolhido aleatoriamente, o que pode levar a resultados diferentes.
