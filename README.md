@@ -409,7 +409,7 @@ Ocorre que o software de reconhecimento de padrões apresenta dificuldades de re
 
 Usando o programa morfologia.cpp como referência, crie um programa que resolva o problema da pré-filtragem de forma para reconhecimento dos caracteres usando operações morfológicas. Você poderá usar as imagens [digitos-1.png](https://agostinhobritojr.github.io/tutorial/pdi/figs/digitos-1.png), [digitos-2.png](https://agostinhobritojr.github.io/tutorial/pdi/figs/digitos-2.png), [digitos-3.png](https://agostinhobritojr.github.io/tutorial/pdi/figs/digitos-3.png), [digitos-4.png](https://agostinhobritojr.github.io/tutorial/pdi/figs/digitos-4.png) e [digitos-5.png](https://agostinhobritojr.github.io/tutorial/pdi/figs/digitos-5.png) para testar seu programa. Cuidado para deixar o ponto decimal separado dos demais dígitos para evitar um reconhecimento errado do número no visor.
 
-<div style="display: flex; justify-content: center;">
+<div align='center'>
     <div>
         <img src="./unidade-III/exercicio24.2/digitos-1.png">
         <img src="./unidade-III/exercicio24.2/segmentos-fechados1.png">
