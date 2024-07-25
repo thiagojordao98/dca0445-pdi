@@ -2,6 +2,12 @@
 
 Aluno: Thiago Jordão
 
+## Sumário
+
+- [Unidade I](#unidade-i)
+- [Unidade II](#unidade-ii)
+- [Unidade III](#unidade-iii)
+
 ## Unidade I
 
 Exercício 2.2 - Utilizando o programa da [Listagem 4](https://agostinhobritojr.github.io/tutorial/pdi/#ex-pixels) como referência, implemente um programa regions.cpp. Esse programa deverá solicitar ao usuário as coordenadas de dois pontos P1
@@ -319,3 +325,111 @@ if __name__ == '__main__':
 ### Conclusão
 
 Ao executar o programa exemplo/kmeans.cpp, observamos que o algoritmo de K-Means pode diferir bastante entre as imagens produzidas. Isso ocorre porque o centro inicial é escolhido aleatoriamente, o que pode levar a resultados diferentes.
+
+## Unidade III
+
+### [Exercício 21.2 - Extração de contornos](https://agostinhobritojr.github.io/tutorial/pdi/contornos.html#_exerc%C3%ADcios_20)
+
+Utilizando o programa contornos.cpp como referência, aplique-o na extração do contorno da imagem retangulos.png mostrada na [Figura 55](https://agostinhobritojr.github.io/tutorial/pdi/contornos.html#fig_retangulos), “Retângulos superpostos”. Quantos pontos são gerados para o contorno dos retângulos?
+
+<p align='center'>
+  <img src="https://agostinhobritojr.github.io/tutorial/pdi/figs/retangulos.png" alt="Imagem de retângulos">
+</p>
+
+Modifique o programa para extrair os contornos internos das componentes conectadas presentes na imagem formas.png. Para isso, altere o parâmetro cv::CHAIN_APPROX_NONE para cv::CHAIN_APPROX_SIMPLE na função findContours(). O que acontece com os novos contornos extraídos? Mostre quantos pontos são gerados após a alteração e discuta como a modificação do parâmetro cv::CHAIN_APPROX_SIMPLE influencia na extração do contorno.
+
+<p align='center'>
+  <img src="./unidade-III/exercicio21.2/resultado1.png">
+</p>
+
+Mudança significativa no número de pontos, demonstra o impacto da simplificação dos contornos.
+
+<p align='center'>
+  <img src="./unidade-III/exercicio21.2/resultado3.png">
+</p>
+
+<p align='center'>
+  <img src="./unidade-III/exercicio21.2/resultado4.png">
+</p>
+
+Impacto na estração de contornos, para o uso do cv::CHAIN_APPROX_SIMPLE age extraindo contornos que são mais leves e mais gerais, o que pode ser suficiente para muitas aplicações, já no uso do cv::CHAIN_APPROX_NONE oferece contornos completos com todos os detalhes, úteis para análises onde a precisão é crucial. 
+
+Código utilizado para resolver esse exercício ➡️ [contornos.cpp](unidade-III/exercicio21.2/contornos.cpp)
+
+
+### [Exercício 22.2 - Extração de características: Momentos de Hu para regiões](https://agostinhobritojr.github.io/tutorial/pdi/momentos-regioes.html#_exerc%C3%ADcios_21)
+
+Utilizando o programa momentos-regioes.cpp como referência utilize as imagens pessoa.jpg e multidao.jpg e descubra em que posição a pessoa da primeira imagem se encontra na segunda imagem. Caso o programa fique lento, verifique se é possível utilizar a função cv::resize() para redimensionar as imagens e tornar o processamento mais rápido. Discuta as dificuldades encontradas na resolução do problema.
+
+<div align='center'>
+  <img src="./unidade-III/exercicio22.2/pessoa.png">
+  <p align='center'> pessoa.png </p>
+  <img src="./unidade-III/exercicio22.2/multidao.png">
+  <p align='center'> multidao.png </p>
+  <img src="./unidade-III/exercicio22.2/resultado.png">
+  <p align='center'> resultado.png </p>
+</div>
+
+Se houver várias pessoas com aparência similar na imagem da multidão, o algoritmo pode ter dificuldades para encontrar a correspondência correta, um outro ponto pode ser a performance deslizar a janela sobre a imagem da multidão pode ser computacionalmente caro, especialmente para imagens grandes sendo assim dividir a imagem e paralelizar o cálculo pode ser uma solução para melhorar a eficiência.
+
+Código utilizado para resolver esse exercício ➡️ [momentos-regions.cpp](unidade-III/exercicio22.2/momentos-regions.cpp)
+
+### [Exercício 23.2 - Extração de características: Momentos de Hu para contornos](https://agostinhobritojr.github.io/tutorial/pdi/momentos-contornos.html#_exerc%C3%ADcios_22)
+
+Modifique o programa momentos.cpp para extrair os momentos de todas as componentes conectadas presentes na imagem de modo a reproduzir o procedimento de obter o arquivo mostrado na [Listagem 75, “Exemplo de momentos extraídos da imagem formas.png.](https://agostinhobritojr.github.io/tutorial/pdi/momentos-contornos.html#exa_momentos_txt)”. Observe a imagem rotulada contornos-rotulados.png e os momentos extraídos para cada contorno. O que pode ser observado sobre a relação entre os momentos de Hu e a forma geométrica das componentes conectadas?
+
+<div align='center'>
+  <img src="./unidade-III/exercicio23.2/formas.png">
+  <p align='center'> formas.png </p>
+
+  <img src="./unidade-III/exercicio23.2/contornos-rotulados.png">
+  <p align='center'> contornos-rotulados.png </p>
+
+  <img src="./unidade-III/exercicio23.2/resultado-momentos-txt.png">
+  <p align='center'> momentos.txt </p>
+</div>
+
+A análise dos momentos de Hu no arquivo momentos.txt demonstra como diferentes contornos e componentes conectadas na imagem contornos-rotulados.png podem ser comparados e classificados com base na forma geométrica. Essas comparações podem ser utilizadas para entender melhor a estrutura e as características das formas presentes na imagem, sendo úteis em diversas aplicações de visão computacional e análise de imagens.
+
+Código utilizado para resolver esse exercício ➡️ [momentos-contornos.cpp](unidade-III/exercicio23.2/momentos-contornos.cpp)
+
+### [Exercício 24.2 - Filtragem de forma com morfologia matemática](https://agostinhobritojr.github.io/tutorial/pdi/morfologia.html#_exerc%C3%ADcios_23)
+
+Um sistema de captura de imagens precisa realizar o reconhecimento de carateres de um visor de segmentos para uma aplicação industrial. O visor mostra caracteres como estes apresentados na [Figura 60, “Caracteres do visor”](https://agostinhobritojr.github.io/tutorial/pdi/morfologia.html#fig_caracteres_visor).
+
+<div align='center'>
+    <img src="./unidade-III/exercicio24.2/caracteres-do-visor.png">
+</div>
+
+Ocorre que o software de reconhecimento de padrões apresenta dificuldades de reconhecer os dígitos em virtude da separação existente entre os segmentos do visor. Idealmente, o software deveria reconhecer os dígitos como na [Figura 61, “Caracteres ideais para o reconhecimento”](https://agostinhobritojr.github.io/tutorial/pdi/morfologia.html#fig_caracteres_visor_reconhecidos).
+
+<div align='center'>
+    <img src="./unidade-III/exercicio24.2/caracteres-do-visor2.png">
+</div>
+
+Usando o programa morfologia.cpp como referência, crie um programa que resolva o problema da pré-filtragem de forma para reconhecimento dos caracteres usando operações morfológicas. Você poderá usar as imagens [digitos-1.png](https://agostinhobritojr.github.io/tutorial/pdi/figs/digitos-1.png), [digitos-2.png](https://agostinhobritojr.github.io/tutorial/pdi/figs/digitos-2.png), [digitos-3.png](https://agostinhobritojr.github.io/tutorial/pdi/figs/digitos-3.png), [digitos-4.png](https://agostinhobritojr.github.io/tutorial/pdi/figs/digitos-4.png) e [digitos-5.png](https://agostinhobritojr.github.io/tutorial/pdi/figs/digitos-5.png) para testar seu programa. Cuidado para deixar o ponto decimal separado dos demais dígitos para evitar um reconhecimento errado do número no visor.
+
+<div style="display: flex; justify-content: center;">
+    <div>
+        <img src="./unidade-III/exercicio24.2/digitos-1.png">
+        <img src="./unidade-III/exercicio24.2/segmentos-fechados1.png">
+    </div>
+    <div>
+        <img src="./unidade-III/exercicio24.2/digitos-2.png">
+        <img src="./unidade-III/exercicio24.2/segmentos-fechados2.png">
+    </div>
+    <div>
+        <img src="./unidade-III/exercicio24.2/digitos-3.png">
+        <img src="./unidade-III/exercicio24.2/segmentos-fechados3.png">
+    </div>
+    <div>
+        <img src="./unidade-III/exercicio24.2/digitos-4.png">
+        <img src="./unidade-III/exercicio24.2/segmentos-fechados4.png">
+    </div>
+    <div>
+        <img src="./unidade-III/exercicio24.2/digitos-5.png">
+        <img src="./unidade-III/exercicio24.2/segmentos-fechados5.png">
+    </div>
+</div>
+
+Código utilizado para resolver esse exercício ➡️ [morfologia.cpp](unidade-III/exercicio24.2/morfologia.cpp)
